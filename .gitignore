@@ -1,0 +1,8 @@
+# venv
+venv/
+
+# .csv
+*.csv
+
+# Cache files
+pycache/
