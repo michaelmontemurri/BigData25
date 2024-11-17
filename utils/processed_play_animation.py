@@ -19,9 +19,9 @@ pio.renderers.default = (
 )
 
 # Modify the variables below to plot your desired play
-main_df_path = "/cim/faverog/BigData25/data/cleaned_data.csv"
-game_id = 2022091200 
-play_id = 401
+main_df_path = "/Users/michaelmontemurri/Downloads/NFLDataBowl2025/BigData25/data/processed/df_clean.csv"
+game_id = 2022090800 
+play_id = 101
 
 # Test cases:
 # 2022090800, 1385 = going left, on attacking half
@@ -75,10 +75,8 @@ df_focused = df_full_tracking[
 ]
 
 # Get General Play Information
-absolute_yd_line = df_focused.absoluteYardlineNumber.values[0]
-play_going_right = (
-    df_focused.playDirection.values[0] == "right"
-)  # 0 if left, 1 if right
+absolute_yd_line = df_focused.yardlineNumber.values[0]
+play_going_right = False
 
 line_of_scrimmage = absolute_yd_line
 
@@ -242,8 +240,8 @@ for frameId in sorted_frame_list:
                 )
             data.append(
                 go.Scatter(
-                    x=plot_df["x_clean"],
-                    y=plot_df["y_clean"],
+                    x=plot_df["x_clean"]/100,
+                    y=plot_df["y_clean"]/100,
                     mode="markers",
                     marker_color=colors[club],
                     marker_size=10,
@@ -262,8 +260,8 @@ for frameId in sorted_frame_list:
                 ].copy()
                 data.append(
                     go.Scatter(
-                        x=ballcarrier_df["x_clean"],
-                        y=ballcarrier_df["y_clean"],
+                        x=ballcarrier_df["x_clean"]/100,
+                        y=ballcarrier_df["y_clean"]/100,
                         mode="markers",
                         marker_color=colors["tackle"],
                         marker_size=25,
@@ -275,8 +273,8 @@ for frameId in sorted_frame_list:
         else:
             data.append(
                 go.Scatter(
-                    x=plot_df["x_clean"],
-                    y=plot_df["y_clean"],
+                    x=plot_df["x_clean"]/100,
+                    y=plot_df["y_clean"]/100,
                     mode="markers",
                     marker_color=colors[club],
                     marker_size=10,
@@ -323,7 +321,7 @@ layout = go.Layout(
     sliders=[sliders_dict],
 )
 
-fig = go.Figure(data=frames[0]["data"], layout=layout, frames=frames[1:])
+fig = go.Figure(data=frames[0]["data"], layout=layout, frames=frames)
 
 # Create First Down Markers
 for y_val in [0, 53]:
