@@ -6,3 +6,4 @@ venv/
 
 # Cache files
 pycache/
+*.pyc
