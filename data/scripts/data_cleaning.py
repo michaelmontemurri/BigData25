@@ -351,16 +351,16 @@ def clean_data(df: pl.DataFrame, active_frames: str) -> pl.DataFrame:
     :param df (pl.DataFrame): the original, aggregated dataframe
     :return df_clean (pl.DataFrame): the cleaned dataframe
     """
+    # Data Cleaning
+    df = remove_inactive_frames(df, active_frames)
+    df = remove_garbage_time(df)
+
     # Data preprocessing so that all plays run from left-to-right and all angles match the standard unit circle convention
     df = rotate_direction_and_orientation(df)
     df = make_plays_left_to_right(df)
 
     # Get rid of penalties
     df = remove_qb_kneels(df)
-
-    # Data Cleaning
-    df = remove_inactive_frames(df, active_frames)
-    df = remove_garbage_time(df)
 
     # Optimize memory usage
     df = convert_geometry_to_int(df)
