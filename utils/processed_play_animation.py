@@ -19,7 +19,7 @@ pio.renderers.default = (
 )
 
 # Modify the variables below to plot your desired play
-main_df_path = "/Users/michaelmontemurri/Downloads/NFLDataBowl2025/BigData25/data/processed/df_clean.csv"
+main_df_path = "/cim/faverog/BigData25/data/processed/df_xPassRush.csv"
 game_id = 2022090800 
 play_id = 101
 
@@ -204,7 +204,7 @@ for frameId in sorted_frame_list:
             hoverinfo="none",
         )
     )
-    # Add line of scrimage
+    '''# Add line of scrimage
     data.append(
         go.Scatter(
             x=[line_of_scrimmage, line_of_scrimmage],
@@ -225,7 +225,18 @@ for frameId in sorted_frame_list:
             showlegend=False,
             hoverinfo="none",
         )
-    )
+    )'''
+
+    def get_defense_color(xPassRush):
+        # normalize xPassRush to be between 0 and 1 but in the range of 0.4 to 1
+        intensity = (xPassRush - 0.4) / 0.6
+        intensity = max(0, min(1, intensity))
+        # Blend between white (255, 255, 255) and red (255, 0, 0)
+        red = 255
+        green = int(255 * (1 - intensity))
+        blue = int(255 * (1 - intensity))
+        return f'rgba({red}, {green}, {blue}, 1)'
+
     # Plot Players
     for club in df_focused.club.unique():
         plot_df = df_focused[
@@ -236,14 +247,22 @@ for frameId in sorted_frame_list:
             for nflId in plot_df.nflId:
                 selected_player_df = plot_df[plot_df.nflId == nflId]
                 hover_text_array.append(
-                    f"nflId:{selected_player_df['nflId'].values[0]}<br>displayName:{selected_player_df['displayName'].values[0]}"
+                    f"nflId:{selected_player_df['nflId'].values[0]}<br>"
+                    f"displayName:{selected_player_df['displayName'].values[0]}<br>"
+                    f"xPassRush:{selected_player_df['xPassRush'].values[0]:.2f}"
                 )
+            # if on defense, make team red
+            if club != df_focused["possessionTeam"].values[0]:
+                colors = [get_defense_color(x) for x in plot_df['xPassRush']]
+            else:
+                colors = colors[club]
+                
             data.append(
                 go.Scatter(
                     x=plot_df["x_clean"]/100,
                     y=plot_df["y_clean"]/100,
                     mode="markers",
-                    marker_color=colors[club],
+                    marker_color=colors,
                     marker_size=10,
                     name=club,
                     hovertext=hover_text_array,
@@ -324,7 +343,7 @@ layout = go.Layout(
 fig = go.Figure(data=frames[0]["data"], layout=layout, frames=frames)
 
 # Create First Down Markers
-for y_val in [0, 53]:
+'''for y_val in [0, 53]:
     fig.add_annotation(
         x=first_down_marker,
         y=y_val,
@@ -337,6 +356,6 @@ for y_val in [0, 53]:
         borderpad=4,
         bgcolor="#ff7f0e",
         opacity=1,
-    )
+    )'''
 
 fig.show()
