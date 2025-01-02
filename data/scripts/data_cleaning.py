@@ -14,6 +14,7 @@ def aggregate_data(
     players_fname: str,
     plays_fname: str, 
     player_play_fname: str,
+    games_fname: str,
     tracking_fname_list: list
 ) -> pl.DataFrame:
     """
@@ -40,28 +41,39 @@ def aggregate_data(
         player_play_fname,
         null_values="NA",
     )
+    df_games = pl.read_csv(
+        games_fname,
+        null_values="NA",
+    )
     df_tracking = pl.concat(
         [pl.read_csv(tracking_fname, null_values="NA") for tracking_fname in tracking_fname_list]
     )
     print(f"INFO: Loaded {len(df_plays)} rows of plays, {len(df_player_plays)} rows of player plays, and {len(df_tracking)} rows of player tracking data")
 
-    # Aggregate plays and tracking
+    # Aggregate player plays and players
     assert "nflId" in df_player_plays.columns, "ERROR: nflId column not found in player_plays dataframe"
     assert "nflId" in df_players.columns, "ERROR: nflId column not found in players dataframe"
     df_agg = df_player_plays.join(df_players, on=["nflId"], how="left")
 
+    # Aggregate (player plays + players) and tracking data
     assert "gameId" in df_agg.columns, "ERROR: gameId column not found in player_plays dataframe"
     assert "playId" in df_agg.columns, "ERROR: playId column not found in player_plays dataframe"
     assert "gameId" in df_tracking.columns, "ERROR: gameId column not found in tracking dataframe"
     assert "playId" in df_tracking.columns, "ERROR: playId column not found in tracking dataframe"
     df_agg = df_agg.join(df_tracking, on=["gameId", "playId", "nflId"], how="left")
 
+    # Aggregate (player plays + players + tracking) and plays
     assert "gameId" in df_agg.columns, "ERROR: gameId column not found in player_plays dataframe"
     assert "playId" in df_agg.columns, "ERROR: playId column not found in player_plays dataframe"
     assert "gameId" in df_plays.columns, "ERROR: gameId column not found in plays dataframe"
     assert "playId" in df_plays.columns, "ERROR: playId column not found in plays dataframe"
     df_agg = df_agg.join(df_plays, on=["gameId", "playId"], how="left")
     print(f"INFO: Aggregated dataframe has {len(df_agg)} rows")
+
+    # Aggregate (player plays + players + tracking + plays) and games
+    assert "gameId" in df_agg.columns, "ERROR: gameId column not found in player_plays dataframe"
+    assert "gameId" in df_games.columns, "ERROR: gameId column not found in games dataframe"
+    df_agg = df_agg.join(df_games, on=["gameId"], how="left")
     
     return df_agg
 
@@ -324,7 +336,6 @@ def strip_unused_data(df: pl.DataFrame, useful_columns: list) -> pl.DataFrame:
 
     :param df (pl.DataFrame): dataframe to filter
     """
-
     # Only keep columns critical for the PlayFrame class to function
     print("INFO: Removing unused columns from dataframe...")
     before = len(df.columns)
@@ -361,7 +372,6 @@ def clean_data(df: pl.DataFrame, active_frames: str) -> pl.DataFrame:
 
     # Get rid of penalties
     df = remove_qb_kneels(df)
-
     # Optimize memory usage
     df = convert_geometry_to_int(df)
 
