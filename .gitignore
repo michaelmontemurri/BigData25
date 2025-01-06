@@ -7,3 +7,6 @@ venv/
 # Cache files
 pycache/
 *.pyc
+
+# checkpoint files
+results/
