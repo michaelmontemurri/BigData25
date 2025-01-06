@@ -19,9 +19,9 @@ pio.renderers.default = (
 )
 
 # Modify the variables below to plot your desired play
-main_df_path = "/cim/faverog/BigData25/data/processed/df_xPassRush.csv"
+main_df_path = "data/processed/df_xPassRush.csv"
 game_id = 2022090800 
-play_id = 101
+play_id = 80
 
 # Test cases:
 # 2022090800, 1385 = going left, on attacking half
@@ -204,7 +204,8 @@ for frameId in sorted_frame_list:
             hoverinfo="none",
         )
     )
-    '''# Add line of scrimage
+    '''
+    # Add line of scrimage
     data.append(
         go.Scatter(
             x=[line_of_scrimmage, line_of_scrimmage],
