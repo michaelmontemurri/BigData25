@@ -9,7 +9,7 @@ Metric Track | Authors: Gian Favero and Michael Montemurri, Mila, 2024
     <img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/large/teaser.png" width="800"/>
 </center>
 <center>Figure 1: Demonstrating predicted play outcomes (xYards) for a set of plays given real-time game context during the 2022 NFL Week 4 Indianapolis Colts vs Tennessee Titans game.</center>
-<br>
+<br></br>
 
 In football analytics, conventional metrics often focus on high-level outcomes such as points scored, turnovers, and yards, though this is rarely done considering the context of the plays leading to those results. A play's success depends on a variety of factors: the game situation, offensive strategy, defensive alignment, and the specific play call itself.
 In this work, we propose a new methodology to analyze play outcomes by leveraging a pre-trained large language model (LLM) that integrates pre-snap game, offensive and defensive contexts, as well as the play call itself. We train a regressor head to predict *xYards*, an analytical tool from which a novel performance metric is derived:
@@ -25,7 +25,7 @@ In blending natural language processing with sports statistics, this approach ai
 <center>
     <img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/large/architecture.png" width="800"/>
 </center>
-<center>Figure 2: xYards model architecture. Pre-snap context is extracted from raw game, player, and play data before being converted into a natural language prompt. A regression head uses the embeddings of a SportsBERT model to predict xYards for a given play context.</center><br>
+<center>Figure 2: xYards model architecture. Pre-snap context is extracted from raw game, player, and play data before being converted into a natural language prompt. A regression head uses the embeddings of a SportsBERT model to predict xYards for a given play context.</center><br></br>
 
 We trained a regression model on top of the BERT architecture to predict expected yards gained for NFL plays based on pre-snap information. The training dataset was constructed from pre- and post-snap data collected during the first 10 weeks of the 2022 NFL season. Each input consisted of situational game context, along with offensive and defensive contexts, which were transformed into natural language prompts (ie. a sentence that could be fed into ChatGPT). These prompts are player-agnostic, enabling the model to predict xYards solely based on the specified contexts. This design allows us to use a player's deviation from the model's predicted output as a metric in itself.
 
@@ -52,7 +52,7 @@ In our experiments we compared 2 pre-trained LLMs against an XGBoost baseline on
 
 <center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/modelComparisonTable.png" width="800"/></center>
 <center>Table 1: Model performance comparison on the validation set. RMSE and standard deviation values are in yards.</center>
-<br>
+<br></br>
 
 The ground truth validation data contains some variation in the yardsGained labels, covering a standard deviation of 8.69 yards. All three models achieved RMSE values within one standard deviation bound, providing some validity to their performance. The SportsBERT regressor demonstrated the lowest RMSE in xYards predicted compared to the base BERT model and the XGBoost baseline. Consequently, in subsequent experiments the SportsBERT variant of the model was used.
 
@@ -66,24 +66,23 @@ From this context, the xPassRush model predicts that the play, a power run, will
 
 <center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/playAnimationWYards-speed.gif" width="800"/></center>
 <center>Figure 3: A sample zone run play from the 2022 Week 9 LA Chargers vs. Atlanta Falcons game. The xYards prediction for the play is 5.12 yards, annotated in red. Isaiah Spiller registers 2 YGoE on the play.</center>
-<br>
+<br></br>
 
 Given that same context, we can use the xYards model to generate counterfactual outcomes for the play. Figure 4 shows xYards predictions for a set of 4 plays: a short pass in the middle of the field, a run with a zone blocking scheme, a deep pass outside the numbers, and a misdirection run. For this scenario, the xYards model predicts that a deep pass outside the numbers will yield the greatest xYards, followed by a short pass over the middle.
 
 <center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/large/playCallsReduced.png" width="1000"/></center>
 <center>Figure 4: Counterfactual outcomes for the same context seen in Figure 3, but with different play calls.</center>
-<br>
+<br></br>
 
 ## Player Assessment
 
 We ran inference on every play to tabulate performance based on expected yards (xYards) and Yards Gained over Expected (YGoE) for all NFL passers.
 
-<center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/large/QBScatter.png
-" width="1000"/></center>
+<center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/QBsScatter.png" width="1000"/></center>
 <center>Figure 5: Scatter plot with quadrants illustrating all passers, plotted on the y-axis as Yards Gained Over Expectation (YGoE) against the x-axis as Average Team Win Probability.</center>
-<br>
+<br></br>
 
-**Passers**: We set out to determine if YGoE correlates with winning probability for passers. Figure 5 shows the YGoE vs. the Average Team Winning Probability for all passers who registered 150 plays through Weeks 1-9 in the 2022 NFL season. Incompletions disproportionately penalize a QB's YGoE as their number of passing attempts increases, so a quadratic adjustment factor is used to normalize this effect. 
+We set out to determine if YGoE correlates with winning probability for passers. Figure 5 shows the YGoE vs. the Average Team Winning Probability for all passers who registered 150 plays through Weeks 1-9 in the 2022 NFL season. Incompletions disproportionately penalize a QB's YGoE as their number of passing attempts increases, so a quadratic adjustment factor is used to normalize this effect. 
 
 Elite QB play (upper right quadrant) leads to a higher average win probability, while poor QB play (lower left quadrant) leads to a lower average win probability. In other cases, teams may have high winning percentages in spite of their passing performance (lower right quadrant) or have passing statistics that could be inflated by defensive looks that come in scenarios with low winning probabilities (top left quadrant).
 
@@ -91,16 +90,15 @@ Elite QB play (upper right quadrant) leads to a higher average win probability, 
 
 In Figure 6, we plot all teams by Yards Gained over Expected (YGoE) vs. Average Team Win Probability for passing and rushing plays. To create a single comparable metric, we normalize both axes and project the data onto the line of perfect correlation in the normalized space. We then transform the projections back into the original metric space for visualization. The team's projected position along this line serves as the basis for our model's ranking.
 
-<center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/large/teamScatter.png
-" width="1000"/></center>
+<center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/large/teamScatter.png" width="1000"/></center>
 <center>Figure 6: Projection of the Yards Gained over Expected (YGoE) vs. Average Team Win Probability of all teams onto the line of perfect correlation for Weeks 1 through 9.</center>
-<br>
+<br></br>
 
 Data points lying above the line of perfect correlation represent teams that are outperforming their record, indicating that their YGoE exceeds what would typically be expected given their win probability. Conversely, teams below this line are underperforming, suggesting that their YGoE is lagging behind expectations. This approach offers an assessment of team efficiency and potential beyond mere win-loss records.
 
 <center><img src="https://raw.githubusercontent.com/faverogian/BigData25/refs/heads/main/figures/xyRankingTable.png" width="850"/></center>
 <center>Table 3: Team rankings after Week 9 of the 2022 NFL Season. Postseason outcomes are indicated where applicable: SB (Super Bowl), CC (Conference Championship), Div (Divisional Round), WC (Wild Card), -- (No Playoffs). The "Record" column reflects the team's record at the end of Week 9.</center>
-<br>
+<br></br>
 
 Our model demonstrated strong predictive capabilities, accurately ranking the two Super Bowl finalists as the top two teams (Philadelphia Eagles and Kansas City Chiefs). While the Minnesota Vikings held a 7-1 record, our model ranked them 7th, correctly anticipating their Wild Card exit. Similarly, the Jacksonville Jaguars, despite a 3-6 record, were ranked 10th and advanced to the Divisional Round, and San Francisco, at 4-4, was ranked 5th, aligning with their Conference Championship run. Notably, the model ranked the 6-3 New York Jets at 27th, reflecting skepticism validated by their failure to make the playoffs.
 
